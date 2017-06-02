@@ -25,15 +25,22 @@ class Crawler:
       if (urlparse(link).netloc == urlparse(Crawler.base_url).netloc) and (link not in Crawler.crawledLinks):
         request = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
         response = urlopen(request, context=Crawler.myssl)
+        
         Crawler.crawledLinks.add(link)
-        print("Url {} Crawled with Status: {} : {} Crawled In Total".format(response.geturl(), response.getcode(), len(Crawler.crawledLinks)))
+        print("> Url {} Crawled with Status: {} : {} Crawled In Total".format(response.geturl(), response.getcode(), len(Crawler.crawledLinks)))
+        
         soup = BeautifulSoup(response.read(), "html.parser")
         Crawler.enqueueLinks(soup.find_all('a'), linksToCrawl)
+        return url, response.getcode()
     except URLError as e:
       print("URL {} threw this error when trying to parse: {}".format(link, e.reason))
       Crawler.errorLinks.add(link)
+      # raise Exception("URL {} threw URLError: {}".format(link, e.reason))
+      return url, response.getcode()
     except Exception as e:
-      print("Exception thrown {}".format(e))
+      Crawler.errorLinks.add(link)
+      # raise Exception("URL {} threw Exception: {}".format(link, e.reason))
+      return url, response.getcode()
 
   @staticmethod
   def enqueueLinks(links, linksToCrawl): 
