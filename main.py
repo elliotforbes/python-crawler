@@ -19,7 +19,7 @@ def run(url):
 
 
 def appendToCSV(result):
-  print("Appending result to CSV File: {}".format(result))
+  print("{} Appending result to CSV File: {}".format(threading.current_thread(), result))
   with open('results.csv', 'a') as csvfile:
     resultwriter = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
     resultwriter.writerow(result)
